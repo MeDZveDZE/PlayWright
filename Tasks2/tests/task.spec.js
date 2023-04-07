@@ -102,3 +102,21 @@ test("8 drag N drop", async ({ page }) => {
     "Dropped!"
   );
 });
+
+
+test("bonus 9 simple cycle + type + click", async ({ page }) => {
+  await page.goto("https://demoqa.com/text-box");
+  const textLocator = page.getByRole('textbox');
+  const countTextLocator = await textLocator.count();
+  
+  for (let i=0; i < countTextLocator; i++) {
+  await textLocator.nth(i).type('test@test.com');
+  }
+
+  await page.locator("#submit").click();
+  
+  await expect(page.locator("#output #name")).toHaveText("Name:test@test.com");
+  await expect(page.locator("#output #email")).toHaveText("Email:test@test.com");
+  await expect(page.locator("#output #currentAddress")).toHaveText("Current Address :test@test.com");
+  await expect(page.locator("#output #permanentAddress")).toHaveText("Permananet Address :test@test.com");
+});
