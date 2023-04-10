@@ -32,7 +32,7 @@ test("3 select from dropdown", async ({ page }) => {
   const colorDropDown = page.locator("#oldSelectMenu");
   await colorDropDown.selectOption("White");
   await expect(colorDropDown).toHaveValue("6");
-  //было бы хорошо объяснить на созвоне, как достать именно значение White для проверки. Все индусы мира не помогли)
+  await expect(page.locator("#oldSelectMenu option:checked")).toHaveText("White");
 });
 
 test("4 clicks", async ({ page }) => {
@@ -47,9 +47,12 @@ test("4 clicks", async ({ page }) => {
   await expect(page.locator("#rightClickMessage")).toHaveText(
     "You have done a right click"
   );
-  await page.getByRole("button").nth(-1).click();
+  // await page.getByRole('button', { name: 'Click Me', exact: true }).click();
+  await page.locator('button:text-is("Click Me")').click();
   //можно ли выбрать локатор используя отрицание? вроде NOT #doubleClickMessage
   //and NOT #rightClickMessage?
+
+  //Ответ: А можно проще, в твоём случае - button:text-is('Click Me')
   await expect(page.locator("#dynamicClickMessage")).toBeVisible();
   await expect(page.locator("#dynamicClickMessage")).toHaveText(
     "You have done a dynamic click"
