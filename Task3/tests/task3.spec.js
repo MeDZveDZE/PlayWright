@@ -29,7 +29,7 @@ test("main", async ({ page, request }) => {
   // @ts-ignore
   const token = cookiesData.find((c) => c.name == "token").value;
 
-//заблокировать все картинки
+  //заблокировать все картинки
   await page.route("**/*", (route) => {
     return route.request().resourceType() === "image"
       ? route.abort()
@@ -40,7 +40,7 @@ test("main", async ({ page, request }) => {
   );
   await page.locator('.text:text-is("Book Store")').click();
   //сделать скриншот
-  await page.waitForSelector('.action-buttons');
+  await page.waitForSelector(".action-buttons");
   await page.screenshot({ path: "files/screenshot.png" });
   const response = await responsePromise;
   await expect(response.status()).toBe(200);
@@ -49,14 +49,16 @@ test("main", async ({ page, request }) => {
   await expect(page.locator(".action-buttons")).toHaveCount(
     responseBody.books.length
   );
-  //заменить количество страниц на 999
+  //заменить количество страниц на рандомное число от 1 до 1000
+  const randomPages = Math.round(Math.random() * 999 + 1).toString();
   await page.route(
     "https://demoqa.com/BookStore/v1/Book?ISBN=*",
     async (route) => {
       const response = await route.fetch();
       let body = await response.text();
       const searchBody = JSON.parse(body);
-      body = body.replace(searchBody.pages, "999");
+
+      body = body.replace(searchBody.pages, randomPages);
       route.fulfill({
         response,
         body,
@@ -72,17 +74,23 @@ test("main", async ({ page, request }) => {
     .locator(".action-buttons")
     .nth(Math.floor(Math.random() * (responseBody.books.length - 1)))
     .click();
-  await expect(page.locator('#pages-wrapper #userName-value')).toHaveText('999');
+  //проверить, что количество страниц заменилось на рандомное число от 1 до 1000
+  await expect(page.locator("#pages-wrapper #userName-value")).toHaveText(
+    randomPages
+  );
 
   //API test
-  const responseAPI = await request.get(`https://demoqa.com/Account/v1/User/${userID}`, {
-      headers:{
-        'Authorization' : 'Bearer '+ token
+  const responseAPI = await request.get(
+    `https://demoqa.com/Account/v1/User/${userID}`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
       },
-  }); 
+    }
+  );
   const responseApiJson = await responseAPI.json();
   expect(responseAPI.status()).toBe(200);
   expect(responseApiJson.books.length).toBe(0);
-  expect(responseApiJson.books).toStrictEqual([]);//такой вариант норм? с toBe([]) выдаёт ошибку. на всякий случай вверху проверка с длинной)
+  expect(responseApiJson.books).toStrictEqual([]); //такой вариант норм? с toBe([]) выдаёт ошибку. на всякий случай вверху проверка с длинной)
   expect(responseApiJson.username).toBe(loginData.userName);
 });
