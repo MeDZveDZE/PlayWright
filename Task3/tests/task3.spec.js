@@ -17,17 +17,17 @@ test("main", async ({ page, request }) => {
   const cookiesData = await page.context().cookies();
   //по какой-то причине подчёркивает всё красным (c и без await, без разницы). только ts ingore помогает, и тест работает норм
   // @ts-ignore
-  expect(cookiesData.find((c) => c.name == "userID").value).toBeTruthy();
+  expect(cookiesData.find((c) => c.name === "userID").value).toBeTruthy();
   // @ts-ignore
-  expect(cookiesData.find((c) => c.name == "userName").value).toBeTruthy();
+  expect(cookiesData.find((c) => c.name === "userName").value).toBeTruthy();
   // @ts-ignore
-  expect(cookiesData.find((c) => c.name == "expires").value).toBeTruthy();
+  expect(cookiesData.find((c) => c.name === "expires").value).toBeTruthy();
   // @ts-ignore
-  expect(cookiesData.find((c) => c.name == "token").value).toBeTruthy();
+  expect(cookiesData.find((c) => c.name === "token").value).toBeTruthy();
   // @ts-ignore
-  const userID = cookiesData.find((c) => c.name == "userID").value; //сохранённые userID и token
+  const userID = cookiesData.find((c) => c.name === "userID").value; //сохранённые userID и token
   // @ts-ignore
-  const token = cookiesData.find((c) => c.name == "token").value;
+  const token = cookiesData.find((c) => c.name === "token").value;
 
   //заблокировать все картинки
   await page.route("**/*", (route) => {
