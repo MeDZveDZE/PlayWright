@@ -55,7 +55,7 @@ test('Task4', async ({ page, request }) => {
     const response = await responsePromise
     await expect(response.status()).toBe(200)
     responseBody = await response.json()
-    // check if books in response body = books in UI (.action-buttons locator)
+    // check if books in response body === books in UI (.action-buttons locator)
     await expect(page.locator('.action-buttons')).toHaveCount(
       responseBody.books.length
     )
